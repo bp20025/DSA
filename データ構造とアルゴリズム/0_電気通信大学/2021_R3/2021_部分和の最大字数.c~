@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <string.h>
+
+#define M 6
+#define N 6
+
+int match (char x[M], char y[N], int m, int n); // 部分和の最大字数を算出する関数
+
+int main() {
+  char x[M] = "bacab";
+  char y[N] = "cbcba";
+
+  printf("%sと%sの部分和の最大字数を算出します．\n", x, y);
+
+  int numOfMatch = match (x, y, M, N); // 部分和の最大字数を算出する
+
+  printf("部分和の最大字数: %d\n", numOfMatch);
+  
+  return 0;
+}
+
+int match (char x[M], char y[N], int m, int n) {
+  int max = 0;
+  for (int i = m; i > 0; i--) {
+    for (int j = n; j > 0; j--) {
+      int counter = 0; // 部分和の字数カウンタ
+      if (x[i] == y[j]) {
+	counter++;
+	counter += match(x, y, i-1, j-1);
+	if (counter >= max)
+	  max = counter;
+	  
+      }
+    }
+  }
+    return max; // 部分和の一致数をreturn 
+}

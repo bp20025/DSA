@@ -1,0 +1,128 @@
+// データ構造とアルゴリズム
+// 集合の表現法
+// ２分探索木
+// 芝浦工業大学システム理工学部電子情報システム学科
+// 学籍番号を入力してください→
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+
+// ２分探索木を表現する構造体
+typedef struct node {
+  int object;
+  struct node *left;
+  struct node *right;
+} Node;
+
+
+Node *createNode(int data); // 新しいノードを作成する関数
+Node *addNode(Node *node, int object); // ノードを追加する関数
+int searchMin(Node *node); // （右側）最小値を探索・取得する関数
+Node *deleteMin(Node *node); // （右側）最小値を探索・削除する関数
+Node *deleteNode(Node *node, int object); // データを削除する関数
+void forEachNode(Node *node); // ２分探索木の格納状況を一覧表示する関数
+
+
+int main() {
+  // ２分探索木のルートを初期化
+  Node *root = NULL;
+
+  // データを挿入
+  root = addNode(root,34);
+  root = addNode(root,51);
+  root = addNode(root,72);
+  root = addNode(root,17);
+  root = addNode(root,66);  
+  root = deleteNode(root,51);
+  root = deleteNode(root,34);
+
+  // 結果
+  forEachNode(root);
+  return 0;
+}
+
+
+// 新たに２分探索木を作成する関数
+Node *createNode(int data) {
+  Node *newNode = (Node *)malloc(sizeof(Node));
+  if (newNode == NULL) {
+    printf("Memory allocation failed!\n");
+    exit(1);
+  }
+  newNode->object = data;
+  newNode->left = NULL;
+  newNode->right = NULL;
+  return newNode;
+}
+
+// 適当な場所へ要素を挿入する関数
+Node *addNode(Node *node, int object) {
+  if (node == NULL) { // 引数として与えられたアドレス位置にノードが存在しない場合
+    return createNode(object); // ノードが存在しないアドレス位置に新規ノードのアドレスをreturn
+  }
+  if (object < node->object) {
+    node->left = addNode(node->left,object); // 左を探索
+  } else if (object > node->object) {
+    node->right = addNode(node->right,object); // 右を探索
+  }
+  return node; // 引数として与えられたアドレスをreturn
+}
+
+// （右側）最小値を探索・取得する関数
+int searchMin(Node *node)
+{
+  while (node->left != NULL) node = node->left;
+  return node->object;
+}
+
+// （右側）最小値を探索・削除する関数
+Node *deleteMin(Node *node)
+{
+  if (node->left == NULL) {
+    Node *temp = node->right;
+    free(node);
+    return temp;
+  }
+  node->left = deleteMin(node->left);
+  return node;
+}
+    
+// データの削除
+Node *deleteNode(Node *node, int object) {
+  // アドレス位置にノードが存在しない場合（削除失敗）
+  if (node == NULL) return NULL;
+  if (object == node->object) {
+    if (node->left == NULL) { // 「右のみ存在」OR「なし」
+      Node *temp = node->right;
+      free(node);
+      return temp;
+    }
+    if (node->right == NULL) { // 「左のみ存在」OR「なし」
+      Node *temp = node->left;
+      free(node);
+      return temp;
+    }
+    // 「左右に存在」
+    node->object = searchMin(node->right);
+    node->right = deleteMin(node->right);
+  }
+  else if (object < node->object) {
+    node->left = deleteNode(node->left, object); // 左を探索
+  }
+  else
+    node->right = deleteNode(node->right, object); // 右を探索
+  return node;
+}
+
+// ２分探索木の格納状況を一覧表示する関数
+void forEachNode(Node *node)
+{
+  if (node != NULL) {
+    forEachNode(node->left);
+    printf("%d\n", node->object);
+    forEachNode(node->right);
+  }
+}

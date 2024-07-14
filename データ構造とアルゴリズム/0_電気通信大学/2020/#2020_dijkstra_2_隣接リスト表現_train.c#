@@ -1,0 +1,3 @@
+// 芝浦工業大学
+#include <stdio.h> // 標準入出力
+#include <stdlib.h> // 標準ライブラリ

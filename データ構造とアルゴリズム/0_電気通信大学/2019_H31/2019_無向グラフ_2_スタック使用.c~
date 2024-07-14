@@ -1,0 +1,121 @@
+// 電気通信大学2019...無向グラフの探索
+// スタックの利用
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define N 7
+
+struct node{
+  int adj[N]; // このnodeにおける隣接行列
+  int visited; // 訪問済を判定
+} G[N];
+
+typedef struct{
+  int data[N];
+  int top;
+}Stack;
+
+Stack s;
+
+void initGraph(); // （struct node）型配列Gの初期化
+
+void visit(int i); // 無向グラフを探索する関数
+
+void initStack(Stack *s); // スタックを初期化する関数
+
+int empty(Stack *s); // スタックが空か判定する関数
+
+void push(Stack *s, int k); // push関数
+
+int pop(Stack *s); // pop関数
+
+int main(){
+  initGraph(); // 探索判定変数，隣接行列の設定
+  initStack(&s); // スタックの初期化
+  
+  visit(0);
+
+  printf("\n");
+
+  // 連結性（連結グラフ）の判定
+  int numOfVisited = 0; // 探索済のノード数
+  for(int i=0;i<N;i++){
+    if(G[i].visited==1)
+      numOfVisited++;
+  }
+  if(numOfVisited == N) // 全ノードが探索済
+    printf("このグラフは連結グラフです\n");
+  else
+    printf("このグラフは連結グラフではありません\n");
+  
+    
+    
+
+  // ここに連結性を判定する処理を追加してください
+
+  return 0;
+}
+
+/*
+void visit(int i){
+  // 訪問処理
+  G[i].visited = 1;
+  printf("%d -> ", i);
+  
+  for(int j=0;j<N;j++){
+    if(G[i].adj[j]==1){ // G[j]が，G[i]と隣接
+      if(G[j].visited==0) visit(j); // G[j]が，未探索なら探索
+    }
+  }
+}
+*/
+
+
+void visit(int i){
+  int current;
+  push(&s,i);
+  while(!empty(&s)){
+    current = pop(&s);
+    // 訪問処理
+    if(G[current.visited == 1)
+       continue;
+    G[current].visited = 1;
+    printf("%d -> ", current);
+    for(int j = N-1;j>=0;j--){
+      if(G[current].adj[j]==1){ // G[j]が，G[i]と隣接
+	if(G[j].visited==0) push(&s,j); // 未探索ならpush（あとで探索，に追加）
+      }
+    }
+  }
+}
+
+
+void initGraph() {
+    // 各ノードの隣接行列と訪問済みフラグを初期化
+    G[0] = (struct node){ .adj = {0, 1, 0, 0, 0, 1, 0}, .visited = 0 };
+    G[1] = (struct node){ .adj = {1, 0, 0, 0, 0, 0, 1}, .visited = 0 };
+    G[2] = (struct node){ .adj = {0, 0, 0, 0, 0, 0, 1}, .visited = 0 };
+    G[3] = (struct node){ .adj = {0, 0, 0, 0, 0, 0, 1}, .visited = 0 };
+    G[4] = (struct node){ .adj = {0, 0, 0, 0, 0, 1, 0}, .visited = 0 };
+    G[5] = (struct node){ .adj = {1, 0, 0, 0, 1, 0, 1}, .visited = 0 };
+    G[6] = (struct node){ .adj = {0, 1, 1, 1, 0, 1, 0}, .visited = 0 };
+}
+
+void initStack(Stack *s){
+  s->top=-1;
+}
+
+int empty(Stack *s){
+  return s->top==-1;
+}
+
+void push(Stack *s, int k){
+  if(s->top==N-1) return; // 配列dataの末尾まで要素が格納されている
+  s->data[++(s->top)]=k;
+}
+
+int pop(Stack *s){
+  if(empty(s)) exit(1); // 配列が空
+  return s->data[(s->top)--]; // 要素読み出し後にデクリメント
+}

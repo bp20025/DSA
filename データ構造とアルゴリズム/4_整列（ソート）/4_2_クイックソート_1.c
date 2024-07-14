@@ -1,0 +1,89 @@
+// データ構造とアルゴリズム
+// 4:整列（ソート
+// 2:クイックソート方法１
+// ・配列の分割を実際に行う（新たに分割後の配列を生成）
+// ・pivotの選定方法：対象の配列の「0番目」「1番目」の大きいほう
+// 芝浦工業大学システム理工学部電子情報システム学科
+#include <stdio.h>
+
+#define MAX_SIZE 100
+
+
+// ２つの配列を結合させる関数
+void mergeArrays(int array1[], int array2[],
+		  int size1, int size2, int mergedArray[]) {
+  for (int i = 0; i < size1; i++) {
+    mergedArray[i] = array1[i];
+  }
+  for (int i = 0, j = size1; i < size2; i++, j++) {
+    mergedArray[j] = array2[i];
+  }
+
+}
+// クイックソート関数
+void quickSort(int array[], int N) {
+  // 配列の要素が１以下
+  if (N <= 1)
+    return;
+
+  int pivot; // 閾値
+
+  int array1[MAX_SIZE];
+  int array2[MAX_SIZE];
+  int size1 = 0, size2 = 0;
+
+  int mergedArray[MAX_SIZE*2];
+  
+
+  // pivotを設定（大きい方を採用）
+  if (array[0] < array[1])
+    pivot = array[1];
+  else
+    pivot = array[0];
+
+  // array -> array1, array2
+  for (int i = 0; i < N; i++) {
+    if (array[i] >= pivot) {
+      array2[size2] = array[i];
+      size2++;
+    } else {
+      array1[size1] = array[i];
+      size1++;
+    }
+  }
+  // array1, array2のソート
+  quickSort(array1, size1);
+  quickSort(array2, size2);
+
+  // array1, array2 -> array
+  mergeArrays(array1, array2, size1, size2, array);
+  
+}
+
+// 配列を一覧表示する関数
+void printArray(int array[], int N) {
+  printf("components of array: ");
+
+  for (int i = 0; i < N; i++) {
+    printf("%d ", array[i]);
+  }
+  printf("\n");
+}
+
+int main() {
+  // int array[] = {4,52,6,3,56,47,3524,32,54,55555,1};
+  int array[] = {5,6,3,9,2,8,4,7};
+  int N = sizeof(array) / sizeof(array[0]);
+
+  printf("components of array; ");
+  
+  quickSort(array, N);
+
+  printf("components of array: ");
+  for (int i = 0; i < N; i++) {
+    printf("%d ", array[i]);
+  }
+  printf("\n");
+
+  return 0;
+}

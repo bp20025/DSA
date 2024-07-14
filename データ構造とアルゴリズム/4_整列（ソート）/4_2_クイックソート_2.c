@@ -1,0 +1,74 @@
+// データ構造とアルゴリズム
+// 4:整列（ソート）
+// 2:クイックソート方法２
+// ・配列の分割を仮想的に行う
+// ・pivotの選定方法：対象の配列のleft番目（仮想的な一番左）
+// 芝浦工業大学システム理工学部電子情報システム学科
+// Reference:琉球大学
+
+#include <stdio.h>
+
+#define MAX_SIZE 100
+
+
+// 2つの要素を交換する関数
+void swap(int *a, int *b) {
+  int temp = *a;
+  *a = *b;
+  *b = temp;
+}
+
+// 配列を一覧表示する関数
+void printArray(int array[], int N) {
+  printf("components of array: ");
+  
+  for (int i = 0; i < N; i++) {
+    printf("%d ", array[i]);
+  }
+  printf("\n");
+}
+
+
+// クイックソート関数
+void quickSort(int array[], int left, int right) {
+
+  // 終了条件
+  if (left >= right)
+    return;
+  printf("次の配列を処理します ");
+  printArray(array, (right - left) + 1);
+
+  int pivot = array[left];
+  // pivotが最小・最大でも，pivotは次のソート対象から外れるので，無限ループに陥ることはない
+  int last = left; // swap相手となるindex（1 ~ lastでpivot未満が約束）
+  
+  
+  // pivot未満／以上に分類
+  for (int i = left + 1; i <= right; i++) {
+    if (pivot > array[i]) // pivot未満は左へ移動
+      swap(&array[i], &array[++last]);
+  }
+  swap(&array[left], &array[last]); // (0 ~ last-1でpivot未満が約束）
+  
+  printf("-> "); printArray(array, (right - left) + 1);
+  
+  printf("next\n");
+  quickSort(array, left, last-1);
+  quickSort(array, last+1, right);
+
+  return;
+}
+
+int main(void) {
+  int array[] = {5,6,3,9,2,8,4,7};
+  
+  int N = sizeof(array) / sizeof(array[0]);
+
+  printArray(array, N);
+
+  quickSort(array, 0, N-1); // 配列の先頭アドレス／左端／右端
+
+  printArray(array, N);
+
+  return 0;
+}

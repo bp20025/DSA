@@ -1,0 +1,151 @@
+// データ構造とアルゴリズム
+// ３：集合の表現法
+// ５：ハッシュ（チェイン法）
+// 芝浦工業大学システム理工学部電子情報システム学科
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TABLE_SIZE 10
+
+// ハッシュテーブルの要素の構造体
+struct Node {
+  int data;
+  struct Node* next;
+};
+
+// ハッシュテーブルの構造体
+struct HashTable {
+  struct Node* table[TABLE_SIZE];
+};
+
+// ハッシュ関数
+int HashFunction(int key) {
+  return key % TABLE_SIZE;
+}
+
+
+// 新規ノードを作成する関数
+struct Node* createNode(int data) {
+  struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+  newNode->data = data;
+  newNode->next = NULL;
+  return newNode;
+  
+}
+
+// ハッシュテーブルに要素を挿入する関数
+void insert(struct HashTable* ht, int data) {
+  int index = HashFunction(data);
+  struct Node* newNode = createNode(data);
+  
+  if (ht->table[index] == NULL) { // indexのテーブルに要素がまだ無い場合
+    ht->table[index] = newNode; // そのままアドレスnewNodeを代入
+  } else {
+    struct Node* temp = ht->table[index];
+    while(temp->next != NULL) { // next == NULLのノードを探索
+      temp = temp->next;
+    }
+    temp->next = newNode; // そこにアドレスnewNodeを代入
+  }
+}
+
+// ハッシュテーブルから要素を検索する関数
+int search(struct HashTable* ht, int data) {
+  int index = HashFunction(data);
+  struct Node* temp = ht->table[index];
+  // indexのテーブルを検索
+  while (temp != NULL) {
+    if (temp->data == data) { // 検索成功
+      return 1;
+    }
+    temp = temp->next;
+  }
+  return 0; // 検索失敗
+}
+
+// ハッシュテーブルから要素を削除する関数
+int delete(struct HashTable* ht, int data) {
+  int index = HashFunction(data);
+  struct Node* current = ht->table[index]; // indexのテーブル
+  struct Node* prev = NULL;
+  int currentIndex = 0; // 要素番号
+  
+  // indexのテーブルを探索
+  while (current != NULL && current->data != data) {
+    prev = current; // 移動前にログとして保持
+    current = current->next;
+  }
+  
+  // 失敗
+  if (current == NULL) { 
+    return 0;
+  }
+  // 成功
+  if (prev == NULL) { // 削除対象が先頭
+    ht->table[index] = current->next;
+  } else {
+    prev->next = current->next;
+  }
+  free(current);
+  return 1;
+}
+    
+// ハッシュテーブルを表示する関数
+void display(struct HashTable* ht) {
+  for (int i = 0; i < TABLE_SIZE; i++) {
+    // 行列演算
+    printf("%d: ", i);
+    struct Node* temp = ht->table[i];
+    while(temp != NULL) {
+      printf("%d ", temp->data);
+      temp = temp->next;
+    }
+    printf("\n");
+  }
+}
+
+int main() {
+  struct HashTable ht;
+  // ハッシュテーブルの初期化
+  for (int i = 0; i < TABLE_SIZE; i++) {
+    ht.table[i] = NULL;
+  }
+
+  // データの挿入
+  insert(&ht, 11);
+  insert(&ht, 41);
+  insert(&ht, 37);
+  insert(&ht, 32);
+  insert(&ht, 10);
+  insert(&ht, 2);
+  insert(&ht, 44);
+  insert(&ht, 54);
+  insert(&ht, 4);
+
+  // ハッシュテーブルの表示
+  printf("--ハッシュテーブルの内容--\n");
+  display(&ht);
+
+  // データの検索
+  int key = 32;
+  printf("キー %d の検索: %s\n", key, search(&ht, key) ? "成功" : "失敗");
+
+  key = 31;
+  printf("キー %d の検索: %s\n", key, search(&ht, key) ? "成功" : "失敗");
+
+  key = 54;
+  printf("キー %d の削除: %s\n", key, delete(&ht, key) ? "成功" : "失敗");
+
+  key= 74;
+  printf("キー %d の削除: %s\n", key, delete(&ht, key) ? "成功" : "失敗");
+
+  // ハッシュテーブルの表示
+  printf("--ハッシュテーブルの内容--\n");
+  display(&ht);
+  
+  return 0;
+}
+
+  
+

@@ -1,0 +1,75 @@
+// 芝浦工業大学システム理工学部電子情報システム学科
+// 電気通信大学　情報ネットワーク専攻2021
+// データ構造とアルゴリズム
+#include <stdio.h>
+
+#define N 7
+
+// ノード構造体
+struct node {
+  int nodeid;
+  char label[4];
+} node[N];
+
+int visited[N] = {0,0,0,0,0,0,0}; // 訪問済の判定
+
+int num[N] = {0,0,0,0,0,0,0}; // 訪問順の保存
+
+int counter = -1; // ノード順位
+
+
+// 閉路の存在しない有向グラフ（ノード数N=7）
+
+int adj[N][N] = {
+    {0, 1, 0, 0, 0, 0, 0},
+    {0, 0, 0, 1, 1, 0, 0},
+    {0, 1, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 1},
+    {0, 0, 0, 0, 1, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0}
+};
+
+
+void func1(int x); // 閉路を持たない有向グラフを探索する関数
+
+void printArray(int a[], int n); // 配列を一覧表示する関数
+
+int main() {
+  func1(0);
+
+  printArray (num, N);
+
+  return 0;
+}
+
+// 閉路を持たない有向グラフを探索する関数
+void func1(int x) {
+  printf("%dを探索します\n", x);
+  // xへ隣接するノードを探索する
+  for (int y=0; y<N; y++) {
+    if (adj[y][x] == 1) {
+      if (visited[y] == 0) func1(y); // 未訪問なら再帰
+    }
+  }
+  // for処理後もxが未探索の場合は訪問済処理
+  if (visited[x] == 0) {
+    visited[x] = 1;
+    counter++;
+    num[x] = counter;
+  }
+
+  // まだ未訪問のノードが存在する場合，そのノードを探索
+  if (counter != N) {
+    // 未訪問のノードを探索
+    for (int y=0; y<N; y++) {
+      if (visited[y] == 0) func1(y); // 未訪問なら探索
+    }
+  }
+}
+
+void printArray(int a[], int n) {
+  for (int i = 0; i < n; i++)
+    printf("%d ", a[i]);
+  printf("\n");
+}

@@ -1,0 +1,123 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 週報フォーマット
+% 神経情報システム研究室
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[dvipdfmx, A4j, twocolumn, 10.5pt]{jsarticle}
+% \usepackage[doublespacing]{setspace} % ダブルスペースにしたいときはコメントを外す
+\usepackage[margin=20truemm]{geometry} % 上下左右の余白は2cm
+\usepackage{graphicx} % 図を挿入
+\setlength{\columnsep}{2zw} % 列の間の空白
+
+\usepackage{amsmath} % 数式？
+\usepackage{listings} % コード
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+% コードのスタイル設定
+\lstset{
+  language=C,
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{blue},
+  commentstyle=\color{green},
+  stringstyle=\color{red},
+  numbers=left,
+  numberstyle=\tiny,
+  stepnumber=1,
+  numbersep=5pt,
+  backgroundcolor=\color{white},
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  frame=single,
+  tabsize=4,
+  captionpos=b,
+  breaklines=true,
+  breakatwhitespace=false,
+  escapeinside={\%*}{*)}
+}
+
+% \usepackage{caption} % キャプションの追加
+% \usepackage{biblatex} % 参考文献を扱うパッケージ
+% \usepackage{comment} % コメントを挿入する 
+
+% \addbibresource{references.bib} % リソースを取得
+
+
+\begin{document}
+%\thispagestyle{empty} % ページ番号はいらない
+
+
+%%% タイトルなど
+\twocolumn[%
+
+\centering % 中央寄せ
+{\fontsize{18pt}{18pt}\selectfont 週報}\\ % 和文題目
+{\fontsize{12pt}{12pt}\selectfont 平岡立成}
+\vskip\baselineskip % 一行空け
+] 
+
+%%% 本文
+\section{今週やったこと}
+\begin{itemize}
+ \item 『神経回路シミュレーション』山崎匡 読み進め
+
+\end{itemize}
+\section{『神経回路シミュレーション』要約}
+
+
+\section*{第12章　高性能神経計算入門}
+ここまで学習してきた神経回路シミュレーションは，高々数千個のニューロン，数十万個のシナプスといった規模だが，実際の脳は約860億個のニューロン，約100兆個のシナプスからなり，通常のコンピュータでは，膨大な計算時間，格納できるメモリ量といった問題からシミュレーションができない．そこでスーパーコンピュータ（スパコン）を用いる．現在のスパコンは，膨大な数の計算機をネットワークで接続することで実現する．例えば理化学研究所計算科学研究センターのスパコン「富岳」は約16万台の計算機により構成される．また，GPUという並列計算のためのハードウェアを搭載したスパコンもある．このようなスパコンを活用することを考える研究が，高性能計算（High Performance Computing, HPC）である．
+
+神経回路シミュレーションにおいても，このような並列計算による高速化を目指す「高性能神経計算」について，第12章では説明していく．
+
+\subsection*{12.1 スパコンの性能指標}
+
+スパコンの性能指標として次のようなものがある．
+
+\begin{itemize}
+\renewcommand{\labelitemi}{}
+ \item FLOPS...浮動小数点の四則演算可能回数[回/s]
+ \item B/F...メモリバンド幅[Bytes/s]\footnote{単位時間あたりに伝送可能なデータ量}／FLOPS[回/s]
+\end{itemize}
+
+FLOPSはムーアの法則\footnote{集積回路上のトランジスタ数は2年で2倍となるという定説．}に伴い指数関数的に増加する．「富岳」においては442PetaFLOPS\footnote{Peta=$10^15$}，つまり1s間に約44京回の基本演算が可能である．次に，B/Fの説明のためにコードの一例を示す．
+
+\begin{lstlisting}[caption=double型変数の1回の四則演算, label=c_example]
+double a[N], b[N], c[N];
+...
+for ( int32_t i = 0; i < N; i++ ) {
+    a[i] = b[i] + c[i];
+}
+\end{lstlisting}
+
+このコードにおける1回のforループについて，演算回数は右辺における加算の1回であるが，その間，doubleの変数を2個読み，1個分の書き込みを行うという，計24Bytesの読み書きを要する．この場合，このコードを最高速度で実行するにはB/F=24であればよい．しかし，「富岳」のマイクロプロセッサであるFujitsu A64FXであってもわずかB/F=0.37\footnote{メモリバンド幅が1.0TBytes/s，演算性能が2.7TFLOPS}程度である．一般的なCPUにおいてもB/F=0.5程度であり，メモリバンド幅の低さが性能を理論値まで上げる上での障壁となっていることがわかる．これを改善するためにキャッシュメモリがあり，A64FXの場合，L1キャッシュに格納した場合，B/Fは4程度まで増える．このために，キャッシュの利用効率改善を目的とした問題の分割や計算順序の入れ替えといった検討が大切になる．
+
+
+
+\subsection*{12.2 高性能計算（HPC）とは何か？}
+芝浦工業大学システム理工学部電子情報hシステム学籍番号を入力してください神経情報システム研究室データ構造とアルゴリズム
+
+\subsubsection*{12.2.1 計算の並列化)
+規模の大きい計算を行う上で，膨大な計算時間とメモリ格納という2つの問題をさきほど示したが，いずれも，問題を分割し個別に計算することが解決につながり，このような並列計算技法の開発と洗練がHPCの主だったテーマである．
+
+プログラム中には並列化可能な部分と不可能な部分がある．
+
+p割の部分化並列化可能で，その性能向上率をsとすると，プログラム全体の性能向上率は
+
+\begin{equation}
+ \frac{1}{(1 - p) + \left(\frac{p}{s}\right)} \footnote{これをアムダールの法則という．}
+\end{equation}
+
+となる
+
+並列にはモデル並列とデータ並列の2つがある．モデル並列は，ニューラルネットワークならば，巨大なニューラルネットをいくつかに分割し解くような，1つの問題（=モデル）を分割し，並列に解く方法であるが，これにはモデル間の通信を要し，通信待ち等のボトルネックの要因が多い．一方，データ並列は同一のニューラルネットに異なるデータセットを与えトレーニングするような並列処理を指し，それぞれは独立した処理なので，モデル間の通信を要さない．
+
+\subsubsection*{12.2.2 並列計算機の種類}
+並列計算をする計算機は，共有メモリ型と分散メモリ型に大別される．共有メモリ型は，一般的なCPUのような，複数の演算器（=マルチコア）で同一のメモリを参照する「共有メモリ型」と，ネットワークで接続された複数のコンピュータのような，それぞれ異なるメモリ空間を使用する「分散メモリ型」に大別できる．前者は演算器間でメモリのコピー等による通信を要さないこと，後者は計算機の台数に制約が無いことが利点であり，現在のスパコンはこのハイブリットとなっている．共有メモリ型ならOpenMP，分散メモリ型ならMPI（Message Passing Interface）と，それぞれ並列化をサポートするライブラリが存在する．
+
+
+\subsubsection*{12.2.3 並列計算の効率}
+
+\subsection*{12.3 神経回路シミュレーションの並列化}
+\end{document}

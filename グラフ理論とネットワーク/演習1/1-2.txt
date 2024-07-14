@@ -1,0 +1,15 @@
+0 1 0 0 1 1 0 
+1 0 0 1 1 0 0 
+0 0 0 1 1 0 1 
+0 1 1 0 1 0 1 
+1 1 1 1 0 1 0 
+1 0 0 0 1 0 0 
+0 0 1 1 0 0 0 
+The degree of vertex-0 is 3
+The degree of vertex-1 is 3
+The degree of vertex-2 is 3
+The degree of vertex-3 is 4
+The degree of vertex-4 is 5
+The degree of vertex-5 is 2
+The degree of vertex-6 is 2
+The average of all vertices is 3.142857

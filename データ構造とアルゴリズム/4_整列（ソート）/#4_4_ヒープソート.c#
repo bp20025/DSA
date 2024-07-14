@@ -1,0 +1,81 @@
+// データ構造とアルゴリズム
+// 4:整列（ソート）
+// 4:ヒープソート
+// ＊相違点
+// heapify関数は再帰的呼出しにより半順序性を担保
+// 芝浦工業大学システム理工学部電子情報システム学科
+
+
+#include <stdio.h>
+
+// swap関数
+void swap(int *a, int *b) {
+  int temp = *a;
+  *a = *b;
+  *b = temp;
+}
+
+// ヒープを再構築する関数
+void heapify(int arr[], int n ,int i) {
+  int largest = i; // 親ノード（index）
+  int left = 2 * i + 1; // 子ノードL（index）
+  int right = 2 * i + 2; // 子ノードR（index）
+
+  if (left < n && arr[left] > arr[largest])
+    largest = left;
+
+  if (right < n && arr[right] > arr[largest])
+    largest = right;
+
+  if (largest != i) {
+    swap(&arr[i], &arr[largest]);
+    heapify(arr, n, largest);
+    // 再帰的のヒープを再構築（値が変更されたノードを根とする部分木に関して
+  }
+}
+
+
+// ヒープソートを実行する関数
+void heapSort(int arr[], int n) {
+  // 最初にヒープを構築する
+  for (int i = n / 2 - 1; i >= 0; i--) {
+    // 「n / 2 - 1」（最後尾ノードの親）〜「0」（それより前のノード）
+    // -> 子を所持するノードに関して関数heapifyを呼び出し
+    // 「n」は「index」でなく「要素数」であることに注意
+    heapify(arr, n, i);
+  }
+  // -> 「親 > 子L／子R」 が担保（ヒープの関係）
+
+  // rootに来る最大要素を最後尾へ移動し掃き出す
+  for (int last = n - 1; last > 0; na--) {
+    
+    swap(&arr[0], &arr[last]); // rootの最大要素を最後尾とswap
+
+    // ヒープの再構築（rootを始点にheapify）
+    heapify(arr, last, 0); // -> 再度ヒープの関係を担保（->rootに最大ノード）
+  }
+    
+}
+
+// 配列の要素を表示する関数
+void printArray(int arr[], int n) {
+  for (int i = 0; i < n; ++i)
+    printf("%d ", arr[i]);
+  printf("\n");
+}
+
+
+int main(void) {
+  int arr[] = {12,32,24,45,18,11,34};
+  int n = sizeof(arr) / sizeof(arr[0]);
+
+  printf("配列の要素一覧: ");
+  printArray(arr, n);
+
+  heapSort(arr, n); // ヒープソート
+
+  printf("ヒープソート後の配列: ");
+  printArray(arr, n);
+
+  return 0;
+}

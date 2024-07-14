@@ -1,0 +1,100 @@
+// データ構造とアルゴリズム
+// 4:整列（ソート）
+// 3:マージソート
+// ＊クイックソートとの相違点
+// ソート前に配列を分割、
+// ソートが担保の最小component２つでmerge処理実行
+// 芝浦工業大学システム理工学部電子情報システム学科
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+int* merge(int array0[], int array1[], int N_0, int N_1) {
+  int i = 0, j = 0;
+  int *result = (int *)malloc((N_0 + N_1) * sizeof(int)); // 結合後の配列
+  int index = 0; // 結合後の配列のindex
+
+  // 結合処理
+  while(1) {
+    // array0の対象要素を格納する条件
+    // array0の要素がarray1の要素より小さい OR array1に要素が存在しない
+    if (i < N_0 && (array0[i] < array1[j] || j >= N_1)) {
+      result[index] = array0[i];
+      i++;
+      index++;
+    }
+    
+    // array1の対象要素を格納する条件
+    if (j < N_1 && (array0[i] > array1[j] || i >= N_0)) {
+      result[index] = array1[j];
+      j++;
+      index++;
+    }
+
+    // array0／array1を末尾まで探索したら終了
+    if (i == N_0 && j == N_1)
+      break;
+  }
+  return result;
+}
+
+// 配列の分割を行う関数
+int* MergeSort(int array[], int N) {
+  if (N <= 1)
+    return array;
+
+  // 分割後の要素数
+  int half_N = N / 2;
+
+  // 配列を分割し、前半／後半に分割
+  int *array0 = (int*)malloc(half_N * sizeof(int));
+  int *array1 = (int*)malloc((N - half_N) * sizeof(int));
+
+  // array0／array1への格納
+  for (int i = 0; i < half_N; i++) {
+    array0[i] = array[i];
+  }
+
+  for (int i = half_N; i < N; i++) {
+    array1[i - half_N] = array[i];
+  }
+
+  // array0／array1を次の処理へ委譲
+  array0 = MergeSort(array0, half_N);
+  array1 = MergeSort(array1, N - half_N);
+
+  return merge(array0, array1, half_N, N - half_N); // array0／array1を結合
+ 
+}
+
+int main(void) {
+  // 芝浦工業大学システム理工学部電子情報システム学科
+  int array[] = {5,7,9,4,6,8,3,2};
+  int N = sizeof(array) / sizeof(array[0]); // 配列サイズの取得
+
+  // 配列要素を一覧表示
+  printf("現在の配列の格納状況: ");
+  for (int i = 0; i < N; i++) {
+    printf("%d ", array[i]);
+  }
+  printf("\n");
+
+  int *sortedArray = MergeSort(array, N); // マージソートの実行
+
+  // 配列要素を一覧表示
+  printf("現在の配列の格納状況: ");
+  for (int i = 0; i < N; i++) {
+    printf("%d ", sortedArray[i]);
+  }
+  printf("\n");
+
+  // メモリ解放
+  free(sortedArray);
+
+  return 0;
+}
+
+  
+  

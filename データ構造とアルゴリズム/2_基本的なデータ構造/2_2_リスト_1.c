@@ -1,0 +1,110 @@
+// 基本的なデータ構造
+// 配列とリスト
+// リスト
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// ノードを表現する構造体
+typedef struct Node {
+  int data;
+  struct Node *next;
+} Node;
+
+// リストの先頭に要素を追加する関数
+void insertAtBeginning(Node **head, int data) {
+  Node *node = (Node *)malloc(sizeof(Node));
+  node->data = data; // アドレスnodeの指すdataにdataを代入
+  node->next = *head; // アドレスnodeの指すnextに先頭アドレス*headを代入
+
+  // リストの先頭を更新
+  *head = node; // 先頭アドレス*headにアドレスnodeを代入
+}
+
+// リストの特定の位置に要素を追加する関数
+void insertAtIndex(Node **head, int index, int data) {
+  Node *current = *head; // 先頭アドレスを代入
+  int currentIndex = 0;
+
+  // 指定された位置の前のノードを探す
+  while (current != NULL && currentIndex < index - 1) {
+    current = current->next; // 最終的に「current=(index-1番目の要素へのアドレス)」
+    currentIndex++;
+  }
+
+  if (current == NULL) {
+    printf("無効な位置が指定されました。n");
+    return;
+  }
+
+  // 新しいノードの作成
+  Node *newNode = (Node *)malloc(sizeof(Node));
+  newNode->data = data;
+  newNode->next = current->next;
+
+  // 新しいノードの挿入
+  current->next = newNode;
+}
+
+// リストの特定の位置の要素を削除する関数
+void deleteAtIndex(Node **head, int index) {
+  Node *current = *head;
+  Node *prev = NULL;
+  int currentIndex = 0;
+
+  // 指定された位置のノードを探す
+  while (current != NULL && currentIndex < index) {
+    prev = current;
+    current = current->next; // 最終的に「current=(index番目の要素へのアドレス)」
+    currentIndex++;
+  }
+
+  if (current == NULL) {
+    printf("無効な位置が指定されました。n");
+    return;
+  }
+
+  // 対象のノードを削除
+  if (prev == NULL) {
+    *head = current->next;
+  } else {
+    prev->next=current->next;
+  }
+  free(current);
+}
+    
+// リストのすべての要素を表示する関数
+void printList(Node *head) {
+  Node *current = head;
+
+  printf("リストの要素:");
+  while (current != NULL) {
+    printf(" %d", current->data);
+    current = current->next;
+  }
+  printf("\n");
+}
+
+    
+int main(void) {
+  Node *head = NULL;
+
+  // リストの先頭に要素を追加
+  insertAtBeginning(&head, 3);
+  insertAtBeginning(&head, 2);
+  insertAtBeginning(&head, 1);
+  printList(head);
+  printf("tesutotesutokorehatesuntoninariyasu%p\n", head); // 宣言宣言
+
+  // リストの特定の位置に要素を追加
+  insertAtIndex(&head, 2, 5); // 先頭アドレスheadへのアドレス,インデックス,要素
+  printList(head);
+
+  // リストの特定の位置の要素を削除
+  deleteAtIndex(&head, 1);
+  printList(head);
+
+  return 0;
+}
+
+  

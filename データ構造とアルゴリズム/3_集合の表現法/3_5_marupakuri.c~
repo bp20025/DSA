@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TABLE_SIZE 10
+
+// ハッシュテーブルの要素を表す構造体
+struct HashEntry {
+    int key;
+    int data;
+    int isOccupied; // エントリが使用されているかどうかを示すフラグ
+};
+
+// ハッシュテーブルを表す構造体
+struct HashTable {
+    struct HashEntry *table;
+    int size;
+};
+
+// ハッシュテーブルの初期化
+struct HashTable *initHashTable(int size) {
+    struct HashTable *hashTable = (struct HashTable *)malloc(sizeof(struct HashTable));
+    hashTable->size = size;
+    hashTable->table = (struct HashEntry *)malloc(size * sizeof(struct HashEntry));
+    for (int i = 0; i < size; i++) {
+        hashTable->table[i].isOccupied = 0;
+    }
+    return hashTable;
+}
+
+// ハッシュ関数（簡単なモジュロ法を使用）
+int hash(int key, int size) {
+    return key % size;
+}
+
+// キーを使用してハッシュテーブルにデータを挿入
+void insert(struct HashTable *hashTable, int key, int data) {
+    int index = hash(key, hashTable->size);
+    while (hashTable->table[index].isOccupied) {
+        index = (index + 1) % hashTable->size; // 開番地法で次のインデックスを計算
+    }
+    hashTable->table[index].key = key;
+    hashTable->table[index].data = data;
+    hashTable->table[index].isOccupied = 1;
+}
+
+// キーを使用してハッシュテーブルからデータを検索
+int search(struct HashTable *hashTable, int key) {
+    int index = hash(key, hashTable->size);
+    while (hashTable->table[index].isOccupied) {
+        if (hashTable->table[index].key == key) {
+            return hashTable->table[index].data;
+        }
+        index = (index + 1) % hashTable->size; // 開番地法で次のインデックスを計算
+    }
+    return -1; // キーが見つからなかった場合
+}
+
+int main() {
+    struct HashTable *hashTable = initHashTable(TABLE_SIZE);
+
+    // ハッシュテーブルにデータを挿入
+    insert(hashTable, 5, 50);
+    insert(hashTable, 2, 20);
+    insert(hashTable, 15, 150);
+    insert(hashTable, 7, 70);
+
+    // ハッシュテーブルからデータを検索
+    int result1 = search(hashTable, 5);
+    printf("Key: 5, Data: %d\n", result1);
+    int result2 = search(hashTable, 15);
+    printf("Key: 15, Data: %d\n", result2);
+    int result3 = search(hashTable, 10); // 存在しないキーを検索
+    printf("Key: 10, Data: %d\n", result3); // 存在しないキーの場合は-1が返される
+
+    free(hashTable->table);
+    free(hashTable);
+
+    return 0;
+}

@@ -1,0 +1,91 @@
+// データ構造とアルゴリズム
+// 4:整列（ソート）
+// 2:クイックソート方法３
+// ・配列の分割を仮想的に行う
+// ・pivotの選定方法：配列の異なる値の、大きいほう
+// left-> <-rightと、左右から大小関係を担保
+// 芝浦工業大学システム理工学部電子情報システム学科
+
+#include <stdio.h>
+
+void swap(int *a, int *b); // swap関数
+
+void printArray( int a[], int N); // 配列の一覧表示
+
+int find_pivot(int array[], int left, int right); // 配列中からpivotを選定する関数
+
+int partition(int a[], int left, int right, int pivot); // 配列を大小で区分する関数
+
+void quickSort(int a[], int left, int right); // クイックソート関数（find_pivot関数、partition関数の呼出、再帰的な挙動の実現）
+
+int main(void) {
+  int A[] = {4,7,6,1,0,3,2,5};  
+  // int A[] = {6,2,8,4,7,3,9};
+
+  int N = sizeof(A) / sizeof(A[0]);
+
+  printArray(A, N);
+  
+  quickSort(A, 0, N - 1); // クイックソートの実行
+
+  printArray(A, N);
+  
+  return 0;
+}
+  
+void swap(int *a, int *b) {
+  int temp = *a;
+  *a = *b;
+  *b = temp;
+}
+
+void printArray(int a[], int N) {
+  printf("components of array: ");
+  for (int i = 0; i < N; i++) {
+    printf("%d ", a[i]);
+  }
+  printf("\n");
+}
+
+int find_pivot(int a[], int left, int right) {
+  int pivot = a[left]; // pivot候補 = left
+
+  int i;
+  for (i = left + 1; i <= right; i++) {
+    if ( a[i] != pivot ) {
+      break;
+    }
+  }
+  return (a[i] > pivot) ? a[i] : pivot; // デカい方を返す
+}
+
+int partition(int a[], int left, int right, int pivot) {
+  while(1) {
+    while ( a[left] < pivot )
+      left++; // ~ (left - 1)　pivot未満が担保
+    while ( a[right] >= pivot )
+      right--; // (right + 1) ~ pivot以上が担保
+
+    if ( left > right )
+      break;
+
+    swap(&a[left], &a[right]); // -> [~ left],[right ~]で大小関係が担保
+  };
+  return left; // leftはpivot以上の要素を指して終了
+  // -> leftを始点にpivot以上が並ぶ（重要）
+}
+
+void quickSort(int a[], int left, int right) {
+  if (left >= right)
+    return;
+  
+  int pivot = find_pivot(a, left, right);
+  int k = partition(a, left, right, pivot); // kを始点にpivot以上が並ぶ
+
+  printf("中途結果: ");
+  printArray(a, right - left + 1); // temp
+
+  // 再帰呼び出し（区分後の配列で同様の処理）（k-1とk以外はNGであることに注意）
+  quickSort(a, left, k-1);
+  quickSort(a, k, right);
+}

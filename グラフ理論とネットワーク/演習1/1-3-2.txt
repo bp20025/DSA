@@ -1,0 +1,10 @@
+0 1 0 0 1 1 0 
+1 0 0 1 1 0 0 
+0 0 0 1 1 0 1 
+0 1 1 0 1 0 1 
+1 1 1 1 0 1 0 
+1 0 0 0 1 0 0 
+0 0 1 1 0 0 0 
+Move randomly across the graph
+Number of trials: 10000
+Average number of paths: 16

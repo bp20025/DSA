@@ -1,0 +1,107 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 週報フォーマット
+% 神経情報システム研究室
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[dvipdfmx, A4j, twocolumn, 10.5pt]{jsarticle}
+% \usepackage[doublespacing]{setspace} % ダブルスペースにしたいときはコメントを外す
+\usepackage[margin=20truemm]{geometry} % 上下左右の余白は2cm
+\usepackage{graphicx} % 図を挿入
+\setlength{\columnsep}{2zw} % 列の間の空白
+
+
+
+\usepackage{amsmath} % 数式？
+% \usepackage{caption} % キャプションの追加
+% \usepackage{biblatex} % 参考文献を扱うパッケージ
+\usepackage{comment} % コメントを挿入する
+
+
+% \addbibresource{references.bib} % リソースを取得
+
+
+\begin{document}
+%\thispagestyle{empty} % ページ番号はいらない
+
+%%% タイトルなど
+\twocolumn[%
+
+\centering % 中央寄せ
+{\fontsize{18pt}{18pt}\selectfont 週報}\\ % 和文題目
+{\fontsize{12pt}{12pt}\selectfont 2024/07/08} \\
+{\fontsize{12pt}{12pt}\selectfont 平岡立成}
+\vskip\baselineskip % 一行空け
+] 
+
+%%% 本文
+\section{先週やったこと}
+\begin{itemize}
+ \item 『神経回路シミュレーション』山崎匡 読み進め
+ \item Hodgkin-Huxley方程式にガウスノイズを入れた研究のサーチ
+
+\end{itemize}
+\section{志望理由書・研究計画書の概要}
+（PDF参照）
+
+
+\section*{第3章　神経回路シミュレーション入門}
+
+ニューロンとシナプスの微分方程式による記述と，常微分方程式の数値解法を説明したところで，実際にシミュレーションのプログラムを作成していく．
+
+
+\subsection*{3.1 ホジキン・ハクスレーモデルのシミュレーション}
+　
+
+\subsection*{3.2 積分発火型モデルのシミュレーション}
+\subsection*{3.3 その他のニューロンモデル}
+\subsubsection*{3.3.1 イジケヴィッチモデル}
+
+HHモデルは膜電位とゲート変数3つの，4変数を用いるモデルであり，LIFモデルは膜電位の1変数のみを用いるモデルであった．いずれも複雑な挙動をさせるためには新たに電流を追加する必要があり，新たに変数を用意する必要がある．変数が増加するほど計算がグク雑となり，計算時間もメモリの必要量も膨大となった．
+
+そこで，単一ニューロンの挙動を数字的に解析したEugene Izhikevich は，2 変数 からなるニューロンモデルを開発した[61,62]. イジケヴィッチモデルとよばれるこの モデルは，以下の式で記述される。
+$$
+\begin{aligned}
+& C \frac{d V}{d t}=k\left(V(t)-E_{\text {leak }}\right)\left(V(t)-E_{\mathrm{t}}\right)-u(t)+I_{\text {ext }}(t) \\
+& \frac{d u}{d t}=a\left(b\left(V(t)-V_{\text {leak }}\right)-u(t)\right)
+\end{aligned}
+$$
+
+ここで, $C$ はキャパシタンス, $V(t)$ は時刻 $t$ の膜電位, $E_{\text {leak }}$ は静止電位, $E_{\mathrm{t}}$ は膜
+
+電位の上限を表す閥値電位, $u(t)$ は復帰電流とよばれる内部パラメータ, $k, a, b$ は 定数である。膜電位 $V(t)$ が閏値 $\theta$ を超えるとニューロンはスパイクを発射するもの とし、かつ $V(t)$ と $u(t)$ をそれぞれ $c$ と $u(t)+d$ にットする。ここで，定数 $c$ は リセット電位， $d$ は過分極の強度を表す．変数は $V(t)$ と $u(t)$ の 2 つだけだが，定数 $a-d$ を変化させることで, このモデルは実際のニューロンが示す様々な挙動を再現す ることが可能である（図 3.9）.
+
+
+
+ \begin{itemize}
+    \item $C$: キャパシタンス
+    \item $V(t)$: 時刻$t$の膜電位
+    \item $E_{\text_{leak}}$: 静止電位
+    \item $E_{\mathrm{t}}$: 膜電位の上限を表現する閾値電位
+    \item $
+$
+
+
+    \item $v(t)[\mathrm{mV}]$: 時刻 $t$ における膜電位
+    \item $\tau[\mathrm{ms}]$: 時定数\footnote{ある値に変化するまでにかかる時間}
+    \item $V_{\text {rest }}[\mathrm{mV}]$: 静止電位
+    \item $R$ $[\mathrm{M} \Omega]$: 膜の抵抗
+    \item $I_{\mathrm{ext}}(t)[\mathrm{nA}]$: 外部電流
+    \item $\theta[\mathrm{mV}]$: スパイクを発射する閾値
+    \item $V_{\text {reset }}[\mathrm{mV}]$: リセット電位
+    \item $V_{\text {init }}[\mathrm{mV}]$: 膜電位の初期値
+ \end{itemize}
+
+\section{今週やること}
+\begin{itemize}
+ \item ??
+ \item ??
+\end{itemize}
+
+
+
+
+\begin{thebibliography}{99}
+% \bibitem{lite1} 和田勝 ``筋肉による筋収縮の司令'' 生命科学C, 2001, https://www.tmd.ac.jp/artsci/biol/textlife/neuron.html.
+% \bibitem{lite2} R. Hosaka, T. Kimura, and T. Matsuura, ``title,'' journal name, pp.10-20, 2021.
+\bibitem{lite2} Henry C. Tuckwell, ``Spike trains in a stochastic Hodgkin–Huxley system（確率論的HHにおけるスパイク列）'' Biosystems, 2005, https://www.sciencedirect.com/science/article/abs/pii/S0303264704001716?via%3Dihub
+\end{thebibliography}
+\end{document}

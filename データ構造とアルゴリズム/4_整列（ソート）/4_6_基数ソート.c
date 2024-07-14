@@ -1,0 +1,102 @@
+// データ構造とアルゴリズム
+// 4:整列（ソート）
+// 6:基数ソート
+// 芝浦工業大学システム理工学部電子情報システム学科
+
+#include <stdio.h>
+#include <stdlib.h> // malloc, calloc
+
+#include <math.h> // pow関数
+
+// 配列を一覧表示する関数
+void printArray(int arr[], int n) {
+  printf("現在の配列の状態: ");
+  for (int i = 0; i < n; i++)
+    printf("%d ", arr[i]);
+  printf("\n");
+}
+
+// 配列の最大値を返す関数
+int findMax(int arr[], int n) {
+  int max = arr[0];
+
+  for (int i = 1; i < n; i++) {
+    if (arr[i] > max)
+      max = arr[i];
+  }
+
+  return max;
+}
+
+// 基数ソートのメイン関数
+void radixSort(int arr[], int n) {
+  // 最大値の取得
+  int max = findMax(arr, n);
+
+  // 最大値の桁数の取得（最大桁数）
+  int maxDigit = 0;
+
+  while( max > 0 ) {
+    max /= 10;
+    maxDigit++;
+  }
+
+  // ソート後の配列
+  int *output = (int*)malloc(n * sizeof(int));
+
+  // カウンタ配列（0で初期化）
+  int *count = (int*)calloc(10, sizeof(int));
+
+  // 各桁に基づきソートを実行
+  for (int digit = 1; digit <= maxDigit; digit++) {
+    // カウンタ配列を初期化（多分要らん）
+    for (int i = 0; i < 10; i++) {
+      count[i] = 0;
+    }
+
+    // 各要素の現在の桁の数字をカウント
+    for (int i = 0; i < n; i++) {
+      int index = (arr[i] / (int)pow(10, digit-1)) % 10;
+      count[index]++;
+    }
+
+    // 累積カウントに変更
+    for (int i = 1; i < 10; i++) {
+      count[i] += count[i-1];
+    }
+
+    // outputに要素を格納
+    for (int i = n - 1; i >= 0; i--) {
+      int index = (arr[i] / (int)pow(10, digit-1)) % 10;
+
+      output[count[index] - 1] = arr[i];
+
+      count[index]--;
+    }
+      
+
+    //outputをarrにコピー
+    for (int i = 0; i < n; i++) {
+      arr[i] = output[i];
+    }
+    printf("途中経過\n");
+    printArray(arr, n);
+  }
+}
+
+
+int main(void) {
+  int arr[] = {170,45,75,90,802,24,2,66};
+
+  int n = sizeof(arr) / sizeof(arr[0]);
+
+  printArray(arr, n);
+
+  radixSort(arr, n); // 基数ソート
+
+  printArray(arr, n);
+
+  return 0;
+}
+  
+  
