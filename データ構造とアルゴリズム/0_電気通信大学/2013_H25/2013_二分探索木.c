@@ -16,6 +16,8 @@ struct n * deletemax(struct n *T, struct n ** result); // 二分探索木の最�
 struct n * decrease(struct n *T); // 二分探索木の根を削除する関数
 void inorderPrint(struct n *s); // 二分探索木を一覧表示する関数
 
+int same(struct n *T, struct n *U); // 二分探索木の一致判定
+
 int main() {
   struct n* root = NULL;
 
@@ -26,15 +28,6 @@ int main() {
   insert_node_2(&root, 2);
   insert_node_2(&root, 4);
   insert_node_2(&root, 7);
-  /*
-  // 二分探索木へのノード追加
-  insert_node(&root, 5);
-  insert_node(&root, 3);
-  insert_node(&root, 8);
-  insert_node(&root, 2);
-  insert_node(&root, 4);
-  insert_node(&root, 7);
-  */
 
   // 生成した二分探索木を一覧表示
   inorderPrint(root);
@@ -58,12 +51,38 @@ int main() {
   inorderPrint(root);
   printf("\n");
 
-  // (3):二分探索木の根の削除
+  // (4)二分探索木の一致判定
+  struct n* root2 = NULL;
+
+  // 二分探索木へのノード追加
+  insert_node_2(&root2, 5);
+  insert_node_2(&root2, 3);
+  insert_node_2(&root2, 8);
+  insert_node_2(&root2, 2);
+  insert_node_2(&root2, 4);
+  insert_node_2(&root2, 7);
+  inorderPrint(root2);
+  printf("\n");  
+
   printf("二分探索木の根を削除します\n");
-  root = decrease(root);
+  root2 = decrease(root2);
   printf("更新: ");
-  inorderPrint(root);
-  printf("\n");
+  inorderPrint(root2);
+  printf("\n");  
+  
+
+  if (same(root, root2))
+    printf("同一の構造を持つ二分探索木です．\n");
+  else
+    printf("異なる構造を持つ二分探索木です．\n");
+
+  insert_node_2(&root, 5);
+  insert_node_2(&root2, 10);
+  
+  if (same(root, root2))
+    printf("同一の構造を持つ二分探索木です．\n");
+  else
+    printf("異なる構造を持つ二分探索木です．\n");
   
   return 0;
 }
@@ -110,7 +129,11 @@ struct n *deletemax(struct n *T, struct n **result) {
     current = current->right;
   }
   
-  *result = current; // 誤答: result = &current;
+  // *result = current; // 誤答: result = &current;
+  *result = (struct n *)malloc(sizeof(struct n));
+  (*result)->e = current->e;
+  (*result)->left = NULL;
+  (*result)->right = NULL;  
 
   // 削除処理
   if (parent == NULL)
@@ -119,7 +142,7 @@ struct n *deletemax(struct n *T, struct n **result) {
     parent->right = current->left;
   // 誤答: current = current->left;
 
-  //誤答:  free(current); 削除した最大ノードを取得する処理もあるので当然メモリ解放NG
+  free(current);//誤答:  free(current); 削除した最大ノードを取得する処理もあるので当然メモリ解放NG
   
   return T; // 削除してできた二分探索木を返す
 }
@@ -127,19 +150,21 @@ struct n *deletemax(struct n *T, struct n **result) {
 // 二分探索木の根を削除してできた二分探索木を返す関数
 struct n *decrease(struct n *T) {
   struct n *max = NULL; // 新たな根の更新処理
+  
   if (T->left != NULL) {
     T->left = deletemax(T->left, &max);
     printf("左子最大ノードを抽出しました: %d\n", max->e);
   }
   else {
-    free(T); // メモリ解放
-    return NULL;
+    return T;
+    // free(T); // メモリ解放
+    // return NULL;
   }
 
   // 新たな根の更新処理
   max->left = T->left;
   max->right = T->right;
-  // free(T); // メモリ解放
+  free(T); // メモリ解放
   return max; 
 }
 
@@ -151,3 +176,60 @@ void inorderPrint(struct n *s) {
     printf("%d ", s->e);
     inorderPrint(s->right);
 }
+
+/*
+int same(struct n *T, struct n *U) {
+  while(1) {
+    if (T==NULL && U==NULL) // T／Uいずれも要素が一致し続けて空集合になった
+      return 1;
+    else if (T==NULL || U==NULL)
+      return 0;
+    if (T->e != U->e)
+      return 0;
+    T = decrease(T);
+    U = decrease(U);
+  }
+}
+*/
+
+/*
+// 二分探索木の一致判定
+int same(struct n *T, struct n *U) {
+  while(1) {
+    if (T==NULL && U==NULL)
+      return 1;
+    else if (T==NULL || U==NULL)
+      return 0;
+    if (T->e != U->e)
+      return 0;
+    printf("一致してるね%d%d\n", T->e, U->e);
+    
+    if (T->left != NULL) {
+      T = decrease(T);
+      U = decrease(U);
+    } else {
+      if (T->e != U->e)
+	return 0;
+      printf("一致してるね%d%d\n", T->e, U->e);
+      T = T->right;
+      U = U->right;
+    }
+  }
+}
+*/
+
+// 二分探索木の一致判定
+// 二分探索木の一致判定
+int same(struct n *T, struct n *U) {
+    if (T == NULL && U == NULL)
+        return 1; // 両方とも空の木なら同じ構造を持つとみなす
+    else if (T == NULL || U == NULL)
+        return 0; // どちらか片方が空の場合は異なる構造を持つとみなす
+    else if (T->e != U->e)
+        return 0; // ノードの値が異なる場合は異なる構造を持つとみなす
+
+    // 左右の部分木を同様に比較
+    return same(decrease(T->left), decrease(U->left)) && same(decrease(T->right), decrease(U->right));
+}
+
+
