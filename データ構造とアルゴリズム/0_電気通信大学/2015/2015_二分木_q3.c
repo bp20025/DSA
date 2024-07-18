@@ -84,16 +84,6 @@ int main() {
     insert_node_2(&s, 70);
     insert_node_2(&s, 60);
 
-    /*
-    insert_node(&s, 35);
-    insert_node(&s, 15);
-    insert_node(&s, 55);
-    insert_node(&s, 25);
-    insert_node(&s, 85);
-    insert_node(&s, 45);
-    insert_node(&s, 75);
-    */
-
     printf("二分木の中順走査: ");
     inorderPrint(s);
     printf("\n");
@@ -108,7 +98,7 @@ int main() {
     return 0;
 }
 
-// 新しいノードを挿入する関数 ***
+// 二分探索木にノードを追加する関数（再帰） ***
 void insert_node(struct node **p, int val) {
   if (*p != NULL) {
     if (val < (*p)->val)
@@ -124,7 +114,7 @@ void insert_node(struct node **p, int val) {
   (*p)->right = NULL;
 }
 
-// 新しいノードを挿入する関数２（再帰呼出しの除去） ***
+// 二分探索木にノードを追加する関数２（再帰なし） ***
 void insert_node_2(struct node **p, int val) {
   struct node **current = p;
   while (*current != NULL) { // if文からwhileループへの変更
