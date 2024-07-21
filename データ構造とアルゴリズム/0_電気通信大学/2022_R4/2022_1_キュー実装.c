@@ -39,12 +39,12 @@ int queueempty() { // キューの空を判定する関数
   return head == tail;
 }
 
-void put(int val) { // push関数
+void put(int val) { // enqueue関数
   tail++;
   queue[tail] = val;
 }
 
-int get() { // pop関数
+int get() { // dequeue関数
   head++;
   int val = queue[head];
   return val;
