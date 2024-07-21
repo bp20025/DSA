@@ -11,8 +11,8 @@ int tail; // 末尾index
 
 void queueinit(); // キューを初期化する関数
 int queueempty(); // キューの空を判定する関数
-void put(int val); // push関数
-int get(); // pop関数
+void put(int val); // enqueue関数
+int get(); // dequeue関数
 
 int main() {
   int result = 0;
