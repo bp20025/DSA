@@ -182,8 +182,8 @@ struct n *decrease(struct n *T) {
     printf("左子最大ノードを抽出しました: %d\n", max->e);
     // 新たな根の更新処理
     max->left = T->left;
-    max->right = T;
     T->left = NULL;
+    max->right = T;
   }
   return max;
 }
