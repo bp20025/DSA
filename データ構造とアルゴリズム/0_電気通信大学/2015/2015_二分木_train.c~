@@ -116,18 +116,18 @@ void insert_node(struct node **p, int val) {
 
 // 二分探索木にノードを追加する関数２（再帰なし） ***
 void insert_node_2(struct node **p, int val) {
-  struct node **c = p;
-  while (*c != NULL) { // if文からwhileループへの変更
-    if (val < (*c)->val)
-      c = &(*c)->left;
+  struct node **current = p;
+  while (*current != NULL) { // if文からwhileループへの変更
+    if (val < (*current)->val)
+      current = &(*current)->left;
     else
-      c = &(*c)->right;
+      current = &(*current)->right;
   }
   // 新規ノードの作成
-  *c = (struct node *)malloc(sizeof(struct node));
-  (*c)->val = val;
-  (*c)->left = NULL;
-  (*c)->right = NULL;
+  *current = (struct node *)malloc(sizeof(struct node));
+  (*current)->val = val;
+  (*current)->left = NULL;
+  (*current)->right = NULL;
 }
 
 // 中順走査 (In-order traversal) で二分木を表示する関数
@@ -150,26 +150,8 @@ int is_bst(struct node *t, int min, int max) {
 
 
 
-// 二分探索木を中順走査で画面表示する関数（よりシンプルになりました） ***
+// 二分探索木を昇順で画面表示する関数
 void print_all_nodes(struct node *p) {
-  struct node * c = p;
-  
-  while(c != NULL || !stackempty()) {
-    while (c != NULL) {
-      push(c);
-      c = c->left;
-    }
-    if (!stackempty()) {
-      c = pop();
-      printf("%d ", c->val);
-      c = c->right;
-    }
-  }
-  printf("\n");
-}
-
-// 二分探索木を中順走査で画面表示する関数２（どっちでもいいよ）
-void print_all_nodes_2(struct node *p) {
   struct node *c = p;
   while(1) {
     while (c != NULL) {
@@ -178,11 +160,9 @@ void print_all_nodes_2(struct node *p) {
     }
     if ( stackempty() ) {
       printf("\n");
-      return;
     }
     c = pop();
     printf("%d ", c->val);
     c = c->right;
   }
 }
-
