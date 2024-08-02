@@ -1,0 +1,28 @@
+// node_heap.h
+
+#ifndef NODE_HEAP_H
+#define NODE_HEAP_H
+
+#define MAX_SIZE 100 // ヒープの容量
+
+// ノード構造体の定義
+struct node {
+    int nodeid;    // ノードの識別子
+    int d;  // あるノードからの最短距離
+};
+
+extern int size; // 現在のヒープの要素数
+
+// 関数のプロトタイプ宣言
+void heapSort(struct node a[], int hi);
+void pushdown(struct node a[], int k, int hi);
+void swap(struct node *a, struct node *b);
+void printArray(struct node a[], int lo, int hi);
+void insertNode(struct node a[], struct node val);
+void pushup(struct node a[], int k);
+
+struct node dequeue(struct node a[]); // 根ノードを取り出す関数
+
+
+
+#endif // NODE_HEAP_H
