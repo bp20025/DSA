@@ -1,3 +1,6 @@
+// 電気通信大学 2024
+// 無向グラフの隣接リスト表現 基本機能
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -82,3 +85,8 @@ int main() {
 
     return 0;
 }
+
+
+
+
+  

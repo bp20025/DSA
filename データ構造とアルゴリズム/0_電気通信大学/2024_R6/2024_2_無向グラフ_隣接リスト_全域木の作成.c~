@@ -1,0 +1,150 @@
+// 芝浦工業大学システム理工学部電子情報システム学科
+// 学籍番号を入力してください
+// 神経情報システム研究室
+
+// 電気通信大学 2024
+// 無向グラフの隣接リスト表現 基本機能
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define INFTY 1000
+
+struct Edge {
+  int dest; // 終点
+  int weight; // 重み
+  struct Edge* next;
+};
+
+struct AdjList {
+  struct Edge* head;
+};
+
+struct Graph {
+  int V; // 頂点数
+  struct AdjList* array; // 各ノードの隣接リスト
+};
+
+struct Graph* newGraph (int V); // 新規グラフを作成する関数
+
+struct Edge* newEdge (int dest, int weight); // 新規エッジを作成する関数
+void addEdge (struct Graph* graph, int src, int dest, int weight); // 新規エッジを作成する関数を処理する関数
+
+void printGraph (struct Graph* graph); // グラフの隣接リストを一覧表示する関数
+
+struct Graph* zenikigi(int src, struct Graph* graph);
+
+int zenbuiti(int array[],int N);
+
+int main() {
+  int V = 6; // 頂点数
+  struct Graph* graph = newGraph(V);
+
+  // エッジの追加処理
+  addEdge(graph,0,3,1);
+  addEdge(graph,0,4,3);
+  addEdge(graph,1,2,3);
+  addEdge(graph,1,4,1);
+  addEdge(graph,2,5,1);
+  addEdge(graph,2,4,2);
+  addEdge(graph,3,5,4);
+
+  printGraph(graph);
+
+  struct Graph* Eopt = zenikigi(1, graph);
+
+  printGraph(Eopt);
+
+  return 0;
+}
+
+struct Graph* newGraph (int V) { // 新規グラフを作成する関数
+  struct Graph* graph = (struct Graph *)malloc(sizeof(struct Graph));
+  graph->V = V;
+  graph->array = (struct AdjList *)malloc( V * sizeof(struct AdjList));
+  for (int i = 0; i < V; i++) {
+    graph->array[i].head = NULL;
+  }
+
+  return graph;
+}
+
+struct Edge* newEdge (int dest, int weight) { // 新規エッジを作成する関数
+  struct Edge* edge = (struct Edge *)malloc(sizeof(struct Edge));
+  edge->dest = dest;
+  edge->weight = weight;
+  edge->next = NULL;
+
+  return edge;
+}
+
+void addEdge(struct Graph* graph, int src, int dest, int weight) { // 新規エッジを作成する関数を処理する関数
+  struct Edge* edge = newEdge(dest, weight);
+  edge->next = graph->array[src].head;
+  graph->array[src].head = edge;
+
+  edge = newEdge(src, weight);
+  edge->next = graph->array[dest].head;
+  graph->array[dest].head = edge;
+}
+
+void printGraph(struct Graph* graph) { // グラフの隣接リストを一覧表示する関数
+  for (int i = 0; i < graph->V; i++) {
+    struct Edge* crawl = graph->array[i].head;
+
+    printf("src:%d / ", i);
+    while (crawl != NULL) {
+      printf("dest:%d, weight:%d / ", crawl->dest, crawl->weight);
+      crawl = crawl->next;
+    }
+    printf("\n");
+  }
+}
+  
+struct Graph* zenikigi(int src, struct Graph* graph) {
+  struct Graph* Eopt = newGraph(graph->V);
+  
+  int U[graph->V];
+  for (int i = 0; i < graph->V; i++) {
+    U[i] = 0;
+  }
+  U[src] = 1;
+
+  while ( !zenbuiti(U, graph->V) ) {
+    int src=-1; int dest=-1; int weight = INFTY;
+
+    // 「U」と「V-U」を端点とする最小点の探索
+    for (int i = 0; i < graph->V; i++) {
+      if (U[i] == 0) continue; // 「U」の要素でなければcontinue
+      struct Edge* crawl = graph->array[i].head;
+      while (crawl != NULL) {
+	if (U[crawl->dest] == 1) {
+	} else if ( crawl->weight < weight ) {
+	  src = i; dest = crawl->dest; weight = crawl->weight;
+	}
+	crawl = crawl->next;
+      }
+    }
+    addEdge(Eopt, src, dest, weight);
+    if (U[src] == 0) {
+      U[src] = 1;
+      printf("にょーん: %d\n", src);
+    } else {
+      U[dest] = 1;
+      printf("にょーん: %d\n", dest);
+    }
+  }
+  return Eopt;
+}
+
+int zenbuiti(int array[], int N) {
+  for (int i = 0; i < N; i++) {
+    if (array[i] != 1) return 0;
+  }
+  return 1;
+}
+
+
+
+
+  

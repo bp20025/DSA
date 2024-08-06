@@ -38,27 +38,34 @@ int main() {
 }
 
 void dijkstra(int s, int w[V][V]) {
-    int u;
-    d[s] = 0;
-    for (int i = 0; i < V; i++) {
-        int dmin = INFTY;
-        for (int j = 0; j < V; j++) {
-            if (S[j] == 1) continue;
-            if (d[j] < dmin) {
-                dmin = d[j];
-                u = j;
-            }
-        }
-        S[u] = 1;
-        
-        // 最短経路の距離が確定した時点でその点までの距離を表示する
-        printf("Distance to vertex %d is %d\n", u, d[u]);
-        
-        for (int j = 0; j < V; j++) {
-            if (S[j] == 1) continue;
-            if (w[u][j] == -1) continue;
-            if (d[j] > d[u] + w[u][j])
-                d[j] = d[u] + w[u][j];
-        }
+  int u; // 現在のノード
+  d[s] = 0; // 始点の最短距離 = 0
+  for (int i = 0; i < V; i++) {
+    int dmin = INFTY;
+
+    // 距離に基づく訪問先uの決定
+    for (int j = 0; j < V; j++) {
+      // 訪問済
+      if (S[j] == 1) continue;
+      
+      if (d[j] < dmin) {
+	dmin = d[j];
+	u = j;
+      }
     }
+    S[u] = 1; // 訪問先uを訪問済に
+    printf("Distance to vertex %d is %d\n", u, d[u]);
+
+    // 最短距離の更新
+    for (int j = 0; j < V; j++) {
+      // 訪問済
+      if (S[j] == 1) continue;
+
+      // 有向辺が存在しない
+      if (w[u][j] == -1) continue;
+      
+      if (d[j] > d[u] + w[u][j])
+	d[j] = d[u] + w[u][j];
+    }
+  }
 }
