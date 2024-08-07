@@ -1,0 +1,24 @@
+src:0 / dest:4, weight:3 / dest:3, weight:1 / 
+src:1 / dest:4, weight:1 / dest:2, weight:3 / 
+src:2 / dest:4, weight:2 / dest:5, weight:1 / dest:1, weight:3 / 
+src:3 / dest:5, weight:4 / dest:0, weight:1 / 
+src:4 / dest:2, weight:2 / dest:1, weight:1 / dest:0, weight:3 / 
+src:5 / dest:3, weight:4 / dest:2, weight:1 / 
+1 4辺を追加しました
+1 2辺を追加しました
+1 4辺を取り出しました
+4 2辺を追加しました
+4 0辺を追加しました
+4 2辺を取り出しました
+2 5辺を追加しました
+2 5辺を取り出しました
+5 3辺を追加しました
+4 0辺を取り出しました
+0 3辺を追加しました
+0 3辺を取り出しました
+src:0 / dest:3, weight:1 / dest:4, weight:3 / 
+src:1 / dest:4, weight:1 / 
+src:2 / dest:5, weight:1 / dest:4, weight:2 / 
+src:3 / dest:0, weight:1 / 
+src:4 / dest:0, weight:3 / dest:2, weight:2 / dest:1, weight:1 / 
+src:5 / dest:2, weight:1 / 

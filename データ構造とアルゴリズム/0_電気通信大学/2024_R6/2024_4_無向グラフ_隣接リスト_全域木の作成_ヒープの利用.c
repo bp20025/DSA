@@ -1,0 +1,224 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define INFTY 1000
+
+struct Edge {
+    int dest;
+    int weight;
+    struct Edge* next;
+};
+
+struct AdjList {
+    struct Edge* head;
+};
+
+struct Graph {
+    int V;
+    struct AdjList* array;
+};
+
+struct MinHeapNode {
+    int src;
+    int dest;
+    int weight;
+};
+
+struct MinHeap {
+    int size;
+    int capacity;
+    struct MinHeapNode* array;
+};
+
+struct Graph* newGraph(int V);
+struct Edge* newEdge(int dest, int weight);
+void addEdge(struct Graph* graph, int src, int dest, int weight);
+void printGraph(struct Graph* graph);
+
+struct MinHeap* createMinHeap(int capacity);
+void swapMinHeapNode(struct MinHeapNode* a, struct MinHeapNode* b);
+void minHeapify(struct MinHeap* minHeap, int idx);
+int isEmpty(struct MinHeap* minHeap);
+struct MinHeapNode extractMin(struct MinHeap* minHeap);
+void decreaseKey(struct MinHeap* minHeap, int v, int weight);
+int isInMinHeap(struct MinHeap* minHeap, int v);
+void insertMinHeap(struct MinHeap* minHeap, struct MinHeapNode minHeapNode);
+
+struct Graph* zenikigi(int src, struct Graph* graph);
+int zenbuiti(int array[], int N);
+
+int main() {
+    int V = 6;
+    struct Graph* graph = newGraph(V);
+
+    addEdge(graph, 0, 3, 1);
+    addEdge(graph, 0, 4, 3);
+    addEdge(graph, 1, 2, 3);
+    addEdge(graph, 1, 4, 1);
+    addEdge(graph, 2, 5, 1);
+    addEdge(graph, 2, 4, 2);
+    addEdge(graph, 3, 5, 4);
+
+    printGraph(graph);
+
+    struct Graph* Eopt = zenikigi(0, graph);
+
+    printGraph(Eopt);
+
+    return 0;
+}
+
+struct Graph* newGraph(int V) {
+    struct Graph* graph = (struct Graph*)malloc(sizeof(struct Graph));
+    graph->V = V;
+    graph->array = (struct AdjList*)malloc(V * sizeof(struct AdjList));
+    for (int i = 0; i < V; i++) {
+        graph->array[i].head = NULL;
+    }
+    return graph;
+}
+
+struct Edge* newEdge(int dest, int weight) {
+    struct Edge* edge = (struct Edge*)malloc(sizeof(struct Edge));
+    edge->dest = dest;
+    edge->weight = weight;
+    edge->next = NULL;
+    return edge;
+}
+
+void addEdge(struct Graph* graph, int src, int dest, int weight) {
+    struct Edge* edge = newEdge(dest, weight);
+    edge->next = graph->array[src].head;
+    graph->array[src].head = edge;
+
+    edge = newEdge(src, weight);
+    edge->next = graph->array[dest].head;
+    graph->array[dest].head = edge;
+}
+
+void printGraph(struct Graph* graph) {
+    for (int i = 0; i < graph->V; i++) {
+        struct Edge* crawl = graph->array[i].head;
+        printf("src:%d / ", i);
+        while (crawl != NULL) {
+            printf("dest:%d, weight:%d / ", crawl->dest, crawl->weight);
+            crawl = crawl->next;
+        }
+        printf("\n");
+    }
+}
+
+struct MinHeap* createMinHeap(int capacity) {
+    struct MinHeap* minHeap = (struct MinHeap*)malloc(sizeof(struct MinHeap));
+    minHeap->size = 0;
+    minHeap->capacity = capacity;
+    minHeap->array = (struct MinHeapNode*)malloc(capacity * sizeof(struct MinHeapNode));
+    return minHeap;
+}
+
+void swapMinHeapNode(struct MinHeapNode* a, struct MinHeapNode* b) {
+    struct MinHeapNode t = *a;
+    *a = *b;
+    *b = t;
+}
+
+void minHeapify(struct MinHeap* minHeap, int idx) {
+    int smallest = idx;
+    int left = 2 * idx + 1;
+    int right = 2 * idx + 2;
+
+    if (left < minHeap->size && minHeap->array[left].weight < minHeap->array[smallest].weight)
+        smallest = left;
+
+    if (right < minHeap->size && minHeap->array[right].weight < minHeap->array[smallest].weight)
+        smallest = right;
+
+    if (smallest != idx) {
+        swapMinHeapNode(&minHeap->array[smallest], &minHeap->array[idx]);
+        minHeapify(minHeap, smallest);
+    }
+}
+
+int isEmpty(struct MinHeap* minHeap) {
+    return minHeap->size == 0;
+}
+
+struct MinHeapNode extractMin(struct MinHeap* minHeap) {
+    if (isEmpty(minHeap))
+        return (struct MinHeapNode){-1, -1, INFTY};
+
+    struct MinHeapNode root = minHeap->array[0];
+    struct MinHeapNode lastNode = minHeap->array[minHeap->size - 1];
+    minHeap->array[0] = lastNode;
+    minHeap->size--;
+    minHeapify(minHeap, 0);
+
+    return root;
+}
+
+void insertMinHeap(struct MinHeap* minHeap, struct MinHeapNode minHeapNode) {
+    if (minHeap->size == minHeap->capacity)
+        return;
+
+    minHeap->size++;
+    int i = minHeap->size - 1;
+    minHeap->array[i] = minHeapNode;
+
+    while (i && minHeap->array[i].weight < minHeap->array[(i - 1) / 2].weight) {
+        swapMinHeapNode(&minHeap->array[i], &minHeap->array[(i - 1) / 2]);
+        i = (i - 1) / 2;
+    }
+}
+
+struct Graph* zenikigi(int src, struct Graph* graph) {
+    struct Graph* Eopt = newGraph(graph->V);
+    struct MinHeap* minHeap = createMinHeap(graph->V * graph->V);
+    int U[graph->V];
+
+    for (int i = 0; i < graph->V; i++) {
+        U[i] = 0;
+    }
+    U[src] = 1;
+
+    struct Edge* crawl = graph->array[src].head;
+    while (crawl != NULL) {
+        struct MinHeapNode newNode = {src, crawl->dest, crawl->weight};
+        insertMinHeap(minHeap, newNode);
+        crawl = crawl->next;
+    }
+
+    while (!zenbuiti(U, graph->V)) {
+        struct MinHeapNode minEdge = extractMin(minHeap);
+        if (minEdge.weight == INFTY)
+            break;
+
+        int u = minEdge.src;
+        int v = minEdge.dest;
+
+        if (U[v] == 0) {
+            addEdge(Eopt, u, v, minEdge.weight);
+            U[v] = 1;
+
+            crawl = graph->array[v].head;
+            while (crawl != NULL) {
+                if (U[crawl->dest] == 0) {
+                    struct MinHeapNode newNode = {v, crawl->dest, crawl->weight};
+                    insertMinHeap(minHeap, newNode);
+                }
+                crawl = crawl->next;
+            }
+        }
+    }
+    free(minHeap->array);
+    free(minHeap);
+
+    return Eopt;
+}
+
+int zenbuiti(int array[], int N) {
+    for (int i = 0; i < N; i++) {
+        if (array[i] != 1)
+            return 0;
+    }
+    return 1;
+}
